@@ -41,7 +41,7 @@ module Rack
         next unless (hHost == host || sName == host \
           || (host.nil? && (hHost == sName || hHost == sName+':'+sPort)))
         next unless location == path[0, location.size]
-        next unless path[location.size] == nil || path[location.size] == ?/
+        next unless path[location.size] == nil || path[location.size] == ?/ || path[location.size] == ?.
 
         return app.call(
           env.merge(
