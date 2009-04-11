@@ -6,12 +6,10 @@ require 'rake/testtask'
 desc "Run all the tests"
 task :default => [:test]
 
-desc "Do predistribution stuff"
-task :predist => [:chmod, :changelog, :rdoc]
-
 
 desc "Make an archive as .tar.gz"
-task :dist => [:predist] do
+task :dist => [:chmod, :changelog, :rdoc, "SPEC"] do
+  FileUtils.touch("RDOX")
   sh "git archive --format=tar --prefix=#{release}/ HEAD^{tree} >#{release}.tar"
   sh "pax -waf #{release}.tar -s ':^:#{release}/:' RDOX SPEC ChangeLog doc"
   sh "gzip -f -9 #{release}.tar"
@@ -144,14 +142,15 @@ Also see http://rack.rubyforge.org.
     File.open("rack.gemspec", "w") { |f| f << spec.to_ruby }
   end
 
-  task :gem => "rack.gemspec" do
+  task :gem => ["rack.gemspec", "SPEC"] do
+    FileUtils.touch("RDOX")
     sh "gem build rack.gemspec"
   end
 end
 
 desc "Generate RDoc documentation"
 task :rdoc do
-  sh(*%w{rdoc --line-numbers --inline-source --main README 
+  sh(*%w{rdoc --line-numbers --main README 
               --title 'Rack\ Documentation' --charset utf-8 -U -o doc} +
               %w{README KNOWN-ISSUES SPEC RDOX} +
               Dir["lib/**/*.rb"])
