@@ -160,7 +160,8 @@ module Rack
 
     # The union of GET and POST data.
     def params
-      self.put? ? self.GET : self.GET.update(self.POST)
+      # self.put? ? self.GET : self.GET.update(self.POST)
+      self.GET.update(self.POST) # LALEE -this is needed because MethodOverride allows PUT with POST Data.
     rescue EOFError => e
       self.GET
     end
