@@ -86,6 +86,18 @@ context "Rack::Response" do
     ].join("\n")
   end
 
+  specify "can delete cookies with the same name from multiple domains" do
+    response = Rack::Response.new
+    response.set_cookie "foo", {:value => "bar", :domain => "sample.example.com"}
+    response.set_cookie "foo", {:value => "bar", :domain => ".example.com"}
+    response["Set-Cookie"].should.equal ["foo=bar; domain=sample.example.com", "foo=bar; domain=.example.com"]
+    response.delete_cookie "foo", :domain => ".example.com"
+    response["Set-Cookie"].should.equal ["foo=bar; domain=sample.example.com", "foo=; domain=.example.com; expires=Thu, 01-Jan-1970 00:00:00 GMT"]
+    response.delete_cookie "foo", :domain => "sample.example.com"
+    response["Set-Cookie"].should.equal ["foo=; domain=.example.com; expires=Thu, 01-Jan-1970 00:00:00 GMT",
+                                         "foo=; domain=sample.example.com; expires=Thu, 01-Jan-1970 00:00:00 GMT"]
+  end
+
   specify "can do redirects" do
     response = Rack::Response.new
     response.redirect "/foo"
