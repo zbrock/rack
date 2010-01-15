@@ -55,6 +55,13 @@ context "Rack::Response" do
     response["Set-Cookie"].should.equal ["foo=bar", "foo2=bar2", "foo3=bar3"].join("\n")
   end
 
+  specify "can set cookies with the same name for multiple domains" do
+    response = Rack::Response.new
+    response.set_cookie "foo", {:value => "bar", :domain => "sample.example.com"}
+    response.set_cookie "foo", {:value => "bar", :domain => ".example.com"}
+    response["Set-Cookie"].should.equal ["foo=bar; domain=sample.example.com", "foo=bar; domain=.example.com"]
+  end
+
   specify "formats the Cookie expiration date accordingly to RFC 2109" do
     response = Rack::Response.new
     
