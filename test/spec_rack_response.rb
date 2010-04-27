@@ -59,7 +59,7 @@ context "Rack::Response" do
     response = Rack::Response.new
     response.set_cookie "foo", {:value => "bar", :domain => "sample.example.com"}
     response.set_cookie "foo", {:value => "bar", :domain => ".example.com"}
-    response["Set-Cookie"].should.equal ["foo=bar; domain=sample.example.com", "foo=bar; domain=.example.com"]
+    response["Set-Cookie"].should.equal ["foo=bar; domain=sample.example.com", "foo=bar; domain=.example.com"].join("\n")
   end
 
   specify "formats the Cookie expiration date accordingly to RFC 2109" do
@@ -97,12 +97,12 @@ context "Rack::Response" do
     response = Rack::Response.new
     response.set_cookie "foo", {:value => "bar", :domain => "sample.example.com"}
     response.set_cookie "foo", {:value => "bar", :domain => ".example.com"}
-    response["Set-Cookie"].should.equal ["foo=bar; domain=sample.example.com", "foo=bar; domain=.example.com"]
+    response["Set-Cookie"].should.equal ["foo=bar; domain=sample.example.com", "foo=bar; domain=.example.com"].join("\n")
     response.delete_cookie "foo", :domain => ".example.com"
-    response["Set-Cookie"].should.equal ["foo=bar; domain=sample.example.com", "foo=; domain=.example.com; expires=Thu, 01-Jan-1970 00:00:00 GMT"]
+    response["Set-Cookie"].should.equal ["foo=bar; domain=sample.example.com", "foo=; domain=.example.com; expires=Thu, 01-Jan-1970 00:00:00 GMT"].join("\n")
     response.delete_cookie "foo", :domain => "sample.example.com"
     response["Set-Cookie"].should.equal ["foo=; domain=.example.com; expires=Thu, 01-Jan-1970 00:00:00 GMT",
-                                         "foo=; domain=sample.example.com; expires=Thu, 01-Jan-1970 00:00:00 GMT"]
+                                         "foo=; domain=sample.example.com; expires=Thu, 01-Jan-1970 00:00:00 GMT"].join("\n")
   end
 
   specify "can do redirects" do
